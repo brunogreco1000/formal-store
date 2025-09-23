@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply min-h-screen text-white; /* esto aplica las clases Tailwind correctamente */
+  background: radial-gradient(circle at center, #1f2937, #0f172a); /* fondo gris oscuro dramático */
+  margin: 0; /* evita scroll inesperado */
+  font-family: sans-serif; /* opcional */
+}

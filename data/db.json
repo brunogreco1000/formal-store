@@ -1,0 +1,55 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Traje Elegante",
+      "price": 250,
+      "image": "/images/traje-elegante.jpg",
+      "description": "Traje elegante de corte clásico, ideal para eventos formales y reuniones de negocios.",
+      "material": "Lana 100%",
+      "category": "Trajes",
+      "size": "M, L, XL",
+      "color": "Negro"
+    },
+    {
+      "id": 2,
+      "name": "Zapatos de Cuero",
+      "price": 120,
+      "image": "/images/zapatos-cuero.jpg",
+      "description": "Zapatos de cuero genuino, cómodos y duraderos, perfectos para uso diario o formal.",
+      "material": "Cuero",
+      "category": "Calzado",
+      "size": "39-45",
+      "color": "Marrón"
+    },
+    {
+      "id": 3,
+      "name": "Camisa Formal",
+      "price": 70,
+      "image": "/images/camisa-formal.png",
+      "description": "Camisa de algodón premium, corte clásico, disponible en varios colores.",
+      "material": "Algodón 100%",
+      "category": "Camisas",
+      "size": "S, M, L, XL",
+      "color": "Blanco"
+    },
+    {
+      "id": 4,
+      "name": "Corbata de Seda",
+      "price": 35,
+      "image": "/images/corbata-seda.webp",
+      "description": "Corbata de seda elegante, ideal para combinaciones formales o de oficina.",
+      "material": "Seda",
+      "category": "Accesorios",
+      "size": "Única",
+      "color": "Azul Marino"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "user": "admin",
+      "pwd": "Admin123!"
+    }
+  ]
+}
