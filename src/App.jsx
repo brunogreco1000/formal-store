@@ -1,8 +1,14 @@
+// src/App.jsx
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Navbar from './components/NavBar';
 import Footer from './components/Footer';
-import { UserCartProvider } from './context/UserCartContext'; // ✅ Context global
+import { AuthProvider } from './context/AuthContext';
+import { UserCartProvider } from './context/UserCartContext';
+import PrivateRoute from './components/PrivateRoute';
+import Loader from './components/Loader';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Lazy loading de páginas
 const Home = lazy(() => import('./pages/Home'));
@@ -17,33 +23,51 @@ const Missing = lazy(() => import('./pages/Missing'));
 
 function App() {
   return (
-    <UserCartProvider>
-      <div className="min-h-screen flex flex-col bg-gradient-radial from-gray-800 to-gray-950 text-white">
+    <AuthProvider>
+      <UserCartProvider>
         <Router>
-          {/* Navbar único */}
+          {/* Navbar fijo */}
           <Navbar />
 
-          <main className="flex-1">
-            <Suspense fallback={<div className="p-8 text-white">Cargando...</div>}>
+          {/* Main con padding-top para que el navbar no tape nada */}
+          <main className="flex-1 pt-20 min-h-screen bg-gradient-radial from-gray-800 to-gray-950 text-white">
+            <Suspense fallback={<Loader />}>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
+                <Route
+                  path="/cart"
+                  element={
+                    <PrivateRoute>
+                      <Cart />
+                    </PrivateRoute>
+                  }
+                />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/compra" element={<Compra />} />
+                <Route
+                  path="/compra"
+                  element={
+                    <PrivateRoute>
+                      <Compra />
+                    </PrivateRoute>
+                  }
+                />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="*" element={<Missing />} />
               </Routes>
             </Suspense>
           </main>
 
-          {/* Footer único */}
+          {/* Footer siempre abajo */}
           <Footer />
+
+          {/* Toast notifications */}
+          <ToastContainer position="top-right" autoClose={3000} />
         </Router>
-      </div>
-    </UserCartProvider>
+      </UserCartProvider>
+    </AuthProvider>
   );
 }
 

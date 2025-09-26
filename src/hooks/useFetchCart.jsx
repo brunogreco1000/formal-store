@@ -6,13 +6,28 @@ export function useFetchCart(userId) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Si estás simulando usuario, podés pasar userId = 1 o null
-    axios.get(`http://localhost:5000/cart?userId=${userId || 1}`)
-      .then(res => {
-        setCartItems(res.data);
-        setLoading(false);
-      })
-      .catch(err => console.error(err));
+    if (!userId) return; // Si no hay usuario, no fetch
+
+    let isMounted = true; // para evitar setState en componente desmontado
+
+    const fetchCart = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(`http://localhost:5000/cart?userId=${userId}`);
+        if (isMounted) setCartItems(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error('Error al obtener el carrito:', err);
+        if (isMounted) setCartItems([]);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchCart();
+
+    return () => {
+      isMounted = false;
+    };
   }, [userId]);
 
   return { cartItems, loading };

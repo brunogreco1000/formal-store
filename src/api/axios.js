@@ -1,7 +1,9 @@
+// src/api/axios.js
 import axios from 'axios';
 
-export default axios.create({
-  baseURL: 'http://localhost:5000', // o la URL de tu backend
-  headers: { 'Content-Type': 'application/json' },
-  withCredentials: true
+const instance = axios.create({
+  baseURL: 'http://localhost:5000',
+  headers: { 'Content-Type': 'application/json' }
 });
+
+export default instance;

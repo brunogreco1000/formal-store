@@ -47,9 +47,23 @@
   ],
   "users": [
     {
-      "id": 1,
-      "user": "admin",
-      "pwd": "Admin123!"
+      "email": "paulallen@gmail.com",
+      "password": "EternalPain1000!",
+      "id": 1
+    }
+  ],
+  "cart": [
+    {
+      "userId": "1",
+      "productId": 1,
+      "quantity": 2,
+      "id": 1
+    },
+    {
+      "userId": "1",
+      "productId": 2,
+      "quantity": 1,
+      "id": 2
     }
   ]
 }
