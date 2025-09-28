@@ -1,18 +1,26 @@
-// src/pages/ProductDetail.jsx
+// src/pages/ProductDetail.tsx
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from '../api/axios';
-import { useUserCart } from '../context/UserCartContext';
+import { useUserCart, CartProduct } from '../context/UserCartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  description?: string;
+  image?: string;
+}
+
 export default function ProductDetail() {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState(1);
-  const [adding, setAdding] = useState(false);
+  const { id } = useParams<{ id: string }>();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [adding, setAdding] = useState<boolean>(false);
 
   const { addToCart, cart, updateQuantity } = useUserCart();
   const { isLoggedIn } = useAuth();
@@ -22,10 +30,10 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`/products/${id}`);
+        const res = await axios.get<Product>(`/products/${id}`);
         setProduct(res.data);
 
-        const inCartItem = cart.find(item => Number(item.productId) === Number(res.data.id));
+        const inCartItem = cart.find(item => item.id === res.data.id);
         setQuantity(inCartItem ? inCartItem.quantity : 1);
       } catch (err) {
         console.error('Error al obtener el producto:', err);
@@ -45,6 +53,7 @@ export default function ProductDetail() {
 
   // Manejo de agregar al carrito
   const handleAddToCart = async () => {
+    if (!product) return;
     if (!isLoggedIn) {
       toast.error('Debes iniciar sesión para agregar productos al carrito.');
       return;
@@ -53,11 +62,11 @@ export default function ProductDetail() {
 
     setAdding(true);
     try {
-      const inCartItem = cart.find(item => Number(item.productId) === Number(product.id));
+      const inCartItem = cart.find(item => item.id === product.id);
       if (inCartItem) {
         updateQuantity(product.id, quantity);
       } else {
-        addToCart(product, quantity);
+        addToCart({ ...product }, quantity);
       }
       toast.success(`${product.name} agregado al carrito ✅`);
     } catch (err) {

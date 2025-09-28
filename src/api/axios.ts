@@ -9,13 +9,13 @@ instance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('accessToken');
 
-    // Crear AxiosHeaders si es undefined
+    // Asegurarse de que headers existe
     if (!config.headers) {
       config.headers = new AxiosHeaders();
     }
 
     if (token) {
-      // setea la cabecera Authorization de forma compatible
+      // Setea Authorization correctamente
       config.headers.set('Authorization', `Bearer ${token}`);
     }
 
@@ -24,4 +24,4 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export default instance;
+export default instance; // ✅ exportación correcta

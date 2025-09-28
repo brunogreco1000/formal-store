@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
+import axios, { AxiosError } from 'axios'; // para los tipos
+import api from '../api/axios'; // tu instancia personalizada
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 
-const Login = () => {
+const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // ✅ URL correcta
-      const res = await axios.post('/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email, password });
       const { _id, token } = res.data;
 
       login(_id, token);
       toast.success('Login exitoso!');
       navigate('/cart');
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message || 'Credenciales inválidas o error de conexión.');
     } finally {
       setLoading(false);
@@ -40,7 +40,7 @@ const Login = () => {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           className="p-2 rounded bg-gray-700 text-white"
           required
         />
@@ -48,7 +48,7 @@ const Login = () => {
           type="password"
           placeholder="Contraseña"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           className="p-2 rounded bg-gray-700 text-white"
           required
         />

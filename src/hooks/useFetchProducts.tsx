@@ -1,7 +1,6 @@
-// src/hooks/useFetchProducts.ts
 import { useState, useEffect } from 'react';
-import axios from '../api/axios';
-import { AxiosResponse } from 'axios'; 
+import api from '../api/axios'; // tu instancia
+import { AxiosResponse } from 'axios';
 
 export interface Product {
   id: string;
@@ -17,27 +16,31 @@ interface RawProduct {
   image: string;
 }
 
-export function useFetchProducts() {
+interface UseFetchProductsReturn {
+  products: Product[];
+  loading: boolean;
+}
+
+export function useFetchProducts(): UseFetchProductsReturn {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     let isMounted = true;
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (): Promise<void> => {
       try {
-        const res: AxiosResponse<RawProduct[]> = await axios.get('/products');
+        const res: AxiosResponse<RawProduct[]> = await api.get('/products');
+        if (!isMounted) return;
 
-        if (isMounted) {
-          const mappedProducts: Product[] = res.data.map(p => ({
-            id: p._id,
-            name: p.name,
-            price: p.price,
-            image: p.image,
-          }));
-          setProducts(mappedProducts);
-        }
-      } catch (err) {
+        const mappedProducts: Product[] = res.data.map(p => ({
+          id: p._id,
+          name: p.name,
+          price: p.price,
+          image: p.image,
+        }));
+        setProducts(mappedProducts);
+      } catch (err: unknown) {
         console.error('Error fetching products:', err);
         if (isMounted) setProducts([]);
       } finally {
@@ -46,6 +49,7 @@ export function useFetchProducts() {
     };
 
     fetchProducts();
+
     return () => {
       isMounted = false;
     };

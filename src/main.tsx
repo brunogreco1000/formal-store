@@ -1,7 +1,7 @@
 // src/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App"; // 👈 ya no hace falta .js
+import App from "./App"; 
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
 import { UserCartProvider } from "./context/UserCartContext";
