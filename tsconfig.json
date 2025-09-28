@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    // Paths
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Environment
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler", // 👈 especial para Vite/ESM
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+
+    // React
+    "jsx": "react-jsx",
+
+    // TypeScript strictness
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Interop / compatibility
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    // Speed / DX
+    "isolatedModules": true,
+    "skipLibCheck": true,
+
+    // Mapas de código (útil en dev, pero no para prod final)
+    "sourceMap": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
