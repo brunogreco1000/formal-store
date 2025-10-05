@@ -1,13 +1,9 @@
 // src/components/PrivateRoute.tsx
-import React, { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-interface PrivateRouteProps {
-  children: ReactNode;
-}
-
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+const PrivateRoute: React.FC = () => {
   const { isLoggedIn, loading } = useAuth();
 
   if (loading) {
@@ -18,7 +14,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
     );
   }
 
-  return isLoggedIn ? <>{children}</> : <Navigate to="/login" replace />;
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;

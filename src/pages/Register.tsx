@@ -1,49 +1,52 @@
 import React, { useState } from 'react';
-import axios from '../api/axios';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
 
-const Register = () => {
+const validateEmail = (email: string): boolean => /\S+@\S+\.\S+/.test(email);
+const validatePassword = (password: string): boolean => password.length >= 6;
+
+const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateEmail(email)) {
+      toast.error('Por favor ingresa un email válido.');
+      return;
+    }
+    if (!validatePassword(password)) {
+      toast.error('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
     setLoading(true);
     try {
-      // ✅ URL correcta
-      await axios.post('/auth/register', { email, password });
-
-      toast.success('¡Registro exitoso!');
-      setSuccess(true);
+      await api.post('/auth/register', { email, password });
+      toast.success('¡Registro exitoso! Serás redirigido al login.');
       setEmail('');
       setPassword('');
+      setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || 'Error al registrarse. Intenta nuevamente.');
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data?.message || 'Error al registrarse. Intenta nuevamente.');
+      } else {
+        toast.error('Error inesperado. Intenta nuevamente.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  if (success) {
-    return (
-      <section className="p-8 max-w-md mx-auto bg-gray-800 rounded-xl shadow-lg mt-8 text-center">
-        <h1 className="text-2xl font-bold mb-4">¡Registro exitoso!</h1>
-        <p className="mb-4">Ya puedes iniciar sesión con tu cuenta.</p>
-        <Link to="/login" className="text-blue-400 hover:text-blue-600 font-semibold">
-          Iniciar sesión
-        </Link>
-      </section>
-    );
-  }
-
   return (
     <section className="p-8 max-w-md mx-auto bg-gray-800 rounded-xl shadow-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-center">Registro</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Crear una cuenta</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="email"
@@ -52,15 +55,17 @@ const Register = () => {
           onChange={e => setEmail(e.target.value)}
           required
           aria-label="Email"
+          autoComplete="email"
           className="p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           type="password"
-          placeholder="Contraseña"
+          placeholder="Contraseña (mínimo 6 caracteres)"
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
           aria-label="Contraseña"
+          autoComplete="new-password"
           className="p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button

@@ -1,70 +1,47 @@
-// src/App.tsx
-import React, { Suspense, lazy } from 'react';
+import React, { lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import PrivateRoute from './components/PrivateRoute';
-import Loader from './components/Loader';
+import { Navbar, Footer, PrivateRoute, Loader } from './components';
+import LazyPage from './components/LazyPage';
+import ErrorBoundary from './components/ErrorBoundary';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Lazy loading con tipado
-const Home = lazy<React.FC>(() => import('./pages/Home'));
-const ProductDetail = lazy<React.FC>(() => import('./pages/ProductDetail'));
-const Cart = lazy<React.FC>(() => import('./pages/Cart'));
-const Login = lazy<React.FC>(() => import('./pages/Login'));
-const Register = lazy<React.FC>(() => import('./pages/Register'));
-const About = lazy<React.FC>(() => import('./pages/About'));
-const Compra = lazy<React.FC>(() => import('./pages/Compra'));
-const Contact = lazy<React.FC>(() => import('./pages/Contact'));
-const Missing = lazy<React.FC>(() => import('./pages/Missing'));
+// Lazy loading
+const Home = lazy(() => import('./pages/Home'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail'));
+const Cart = lazy(() => import('./pages/Checkout'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const About = lazy(() => import('./pages/About'));
+const Compra = lazy(() => import('./pages/Compra'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Missing = lazy(() => import('./pages/Missing'));
 
 const App: React.FC = () => {
   return (
     <Router>
       <Navbar />
-      <main className="flex-1 pt-20 min-h-screen bg-gradient-radial from-gray-800 to-gray-950 text-white">
-        <Suspense fallback={<Loader />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route
-              path="/cart"
-              element={
-                <PrivateRoute>
-                  <Cart />
-                </PrivateRoute>
-              }
-            />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/about" element={<About />} />
-            <Route
-              path="/compra"
-              element={
-                <PrivateRoute>
-                  <Compra />
-                </PrivateRoute>
-              }
-            />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<Missing />} />
-          </Routes>
-        </Suspense>
+
+      <main className="flex-1 pt-20 min-h-screen bg-gradient-to-b from-gray-800 to-gray-950 text-white">
+        <Routes>
+          <Route path="/" element={<ErrorBoundary><LazyPage component={Home} /></ErrorBoundary>} />
+          <Route path="/product/:id" element={<ErrorBoundary><LazyPage component={ProductDetail} /></ErrorBoundary>} />
+          <Route path="/login" element={<ErrorBoundary><LazyPage component={Login} /></ErrorBoundary>} />
+          <Route path="/register" element={<ErrorBoundary><LazyPage component={Register} /></ErrorBoundary>} />
+          <Route path="/about" element={<ErrorBoundary><LazyPage component={About} /></ErrorBoundary>} />
+          <Route path="/contact" element={<ErrorBoundary><LazyPage component={Contact} /></ErrorBoundary>} />
+
+          <Route element={<PrivateRoute />}>
+            <Route path="/cart" element={<ErrorBoundary><LazyPage component={Cart} /></ErrorBoundary>} />
+            <Route path="/compra" element={<ErrorBoundary><LazyPage component={Compra} /></ErrorBoundary>} />
+          </Route>
+
+          <Route path="*" element={<ErrorBoundary><LazyPage component={Missing} /></ErrorBoundary>} />
+        </Routes>
       </main>
+
       <Footer />
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
+      <ToastContainer position="top-right" autoClose={3000} theme="dark" />
     </Router>
   );
 };

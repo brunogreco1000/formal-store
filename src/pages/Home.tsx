@@ -4,7 +4,7 @@ import ProductCard from '../components/ProductCard';
 import Loader from '../components/Loader';
 
 const Home: React.FC = () => {
-  const { products, loading } = useFetchProducts(); // ❌ Sin <Product[]>
+  const { products, loading } = useFetchProducts(); 
 
   if (loading) return <Loader />;
 

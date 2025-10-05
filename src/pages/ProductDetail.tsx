@@ -66,7 +66,7 @@ export default function ProductDetail() {
       if (inCartItem) {
         updateQuantity(product.id, quantity);
       } else {
-        addToCart({ ...product }, quantity);
+        addToCart({ ...product, productId: product.id}, quantity);
       }
       toast.success(`${product.name} agregado al carrito ✅`);
     } catch (err) {

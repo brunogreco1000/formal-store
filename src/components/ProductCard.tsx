@@ -1,4 +1,3 @@
-// src/components/ProductCard.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useUserCart } from '../context/UserCartContext';
@@ -16,8 +15,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, image }) =>
   const { cart, addToCart, removeFromCart } = useUserCart();
   const { isLoggedIn } = useAuth();
 
-  // Buscar si el producto ya está en el carrito
-  const inCart = cart.find(item => item.id === id);
+  const inCart = isLoggedIn ? cart.find(item => item.productId === id) : undefined;
 
   const handleClick = () => {
     if (!isLoggedIn) {
@@ -25,15 +23,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, image }) =>
       return;
     }
 
-    if (inCart) {
-      removeFromCart(inCart.id); // El toast se dispara desde el provider
-    } else {
-      // ⚡ Corrección: quantity no va dentro del objeto, se pasa como segundo argumento
-      addToCart({ id, name: title, price, image }, 1);
-    }
+    if (inCart) removeFromCart(inCart.id);
+    else addToCart({ productId: id, name: title, price, image }, 1);
   };
 
-  // Formatear precio a moneda local
   const formattedPrice = new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
@@ -55,17 +48,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, image }) =>
       <button
         onClick={handleClick}
         aria-pressed={!!inCart}
-        className={`mt-3 px-4 py-2 rounded ${
-          inCart ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'
-        } text-white transition`}
+        className={`mt-3 px-4 py-2 rounded ${inCart ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white transition`}
       >
         {inCart ? 'Quitar del carrito' : 'Agregar al carrito'}
       </button>
 
-      <Link
-        to={`/product/${id}`}
-        className="mt-2 text-blue-400 hover:text-blue-600 transition text-center"
-      >
+      <Link to={`/product/${id}`} className="mt-2 text-blue-400 hover:text-blue-600 transition text-center">
         Ver Detalle
       </Link>
     </div>

@@ -1,8 +1,5 @@
-// src/components/Loader.tsx
-
-
 interface LoaderProps {
-  small?: boolean; // opcional
+  small?: boolean; 
 }
 
 const Loader: React.FC<LoaderProps> = ({ small }) => (

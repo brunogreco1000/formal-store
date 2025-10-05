@@ -1,7 +1,5 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios, { AxiosError } from 'axios'; // para los tipos
-import api from '../api/axios'; // tu instancia personalizada
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
@@ -15,17 +13,18 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error('Por favor ingresa un email válido.');
+      return;
+    }
+
     setLoading(true);
-
     try {
-      const res = await api.post('/auth/login', { email, password });
-      const { _id, token } = res.data;
-
-      login(_id, token);
+      await login(email, password); // toda la lógica en AuthContext
       toast.success('Login exitoso!');
       navigate('/cart');
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
+    } catch (err: any) {
       toast.error(err.response?.data?.message || 'Credenciales inválidas o error de conexión.');
     } finally {
       setLoading(false);
@@ -34,23 +33,23 @@ const Login: React.FC = () => {
 
   return (
     <div className="p-8 max-w-md mx-auto bg-gray-800 rounded-xl shadow-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Iniciar sesión</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white"
           required
+          className="p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           type="password"
           placeholder="Contraseña"
           value={password}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white"
           required
+          className="p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           type="submit"
